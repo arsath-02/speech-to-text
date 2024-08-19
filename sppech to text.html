@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Speech to text</title>
+   <link rel="icon" type="image/x-icon" href="mic.ico">
+	
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         background-color: #f2f2f2;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 100vh;
+         margin: 0;
+      }
+
+      h1 {
+         margin-top: 20px;
+      }
+
+      .container {
+         text-align: center;
+      }
+
+      .speaker {
+         display: flex;
+         justify-content: space-between;
+         width: 13rem;
+         box-shadow: 0 0 13px #0000003d;
+         border-radius: 5px;
+         background-color: #ffffff;
+         padding: 0.5rem;
+         margin-bottom: 1rem;
+      }
+
+      .speaker p {
+         color: #666666;
+         font-weight: 800;
+         margin: 0;
+         padding-left: 0.5rem;
+      }
+
+      button {
+         border: none;
+         padding: 0.5rem 1rem;
+         background-color: #007bff;
+         color: #ffffff;
+         border-radius: 3px;
+         cursor: pointer;
+         transition: background-color 0.3s;
+      }
+
+      button:hover {
+         background-color: #0056b3;
+      }
+
+      #output {
+         display: none;
+         background-color: #ffffff;
+         padding: 1rem;
+         border-radius: 5px;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         color: #333333;
+      }
+   </style>
+</head>
+<body>
+   <div>
+	<h1>Welcome to audio converter</h1>
+   </div>
+   <div class="container">
+      <div class="speaker">
+         <p id="action">Press the button and speak</p>
+         <button onclick="runSpeechRecog()">convert</button>
+      </div>
+      <h3 id="output"></h3>
+   </div>
+   <script>
+      runSpeechRecog = () => {
+         document.getElementById("output").innerHTML = "Loading text...";
+         var output = document.getElementById('output');
+         var action = document.getElementById('action');
+         let recognition = new webkitSpeechRecognition();
+         recognition.lang = 'ta-IN';
+	
+         recognition.onstart = () => {
+            action.innerHTML = "Listening...";
+         }
+         recognition.onresult = (e) => {
+            var transcript = e.results[0][0].transcript.toLowerCase();
+            output.innerHTML = transcript;
+            output.style.display = "block";
+            action.innerHTML = "";
+            if (transcript.includes('thank you')) {
+               recognition.stop();
+               output.innerHTML += "<br>Recognition ended. Thank you!";
+            }
+         }
+         recognition.onerror = (e) => {
+            output.innerHTML += "<br>Error occurred: " + e.error;
+         }
+         recognition.onend = () => {
+            if (!output.innerHTML.includes("Recognition ended.")) {
+               output.innerHTML += "<br> Thank you!";
+            }
+         }
+         recognition.start();
+      }
+   </script>
+</body>
+</html>
